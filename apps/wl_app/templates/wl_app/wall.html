@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>The wall</title>
+    </head>
+    <body>
+        <h1>Coding Dojo Wall</h1>
+        <h2>Welcome, {{request.session.name}}!</h2>
+
+        <a href="/logout">Logout</a>
+        <fieldset>
+            <legend><h2>Post a new message</h2></legend>
+                <form class="" action="/createMessage" method="post">
+                    {%csrf_token%}
+                    <input type="text" name="message" placeholder="Message">
+                    <input type="submit" name="" value="Post message">
+                </form>
+
+        </fieldset>
+        <br><br>
+        {% for message in messages %}
+            <p>{{message}}</p>
+        {% endfor %}
+
+        <fieldset>
+            <legend><h3>All Messages</h3></legend>
+
+            {% for post in posts %}
+            <h3>Message {{post.id}} by {{post.author.firstName}} <span style="font-weight:normal">- {{post.created_at}}</span></h3>
+            <p>{{post.message}}</p>
+
+            {% if post.author.id == request.session.id %}
+            <a href="/deleteMessage/{{post.id}}">Delete</a>
+            {% endif %}
+
+            <fieldset>
+                <legend><h4>Comments</h4></legend>
+
+            {% for comment in comments %}
+                {% if comment.message.id == post.id %}
+                    <h4>Comment {{comment.id}} by {{comment.author.firstName}} <span style="font-weight:normal">- {{comment.created_at}}</span>  </h4>
+                    <p>{{comment.comment}}</p>
+                {% endif %}
+            {% endfor %}
+
+            <h4>Post a comment</h4>
+
+            <form class="" action="/createComment" method="post">
+              {%csrf_token%}
+              <input type="hidden" name="message_id" value="{{ post.id}} ">
+              <input type="text" name="comment" placeholder="Comment">
+              <input type="submit" value="Post comment" >
+            </form>
+
+            </fieldset>
+            <br>
+            {% endfor %}
+        </fieldset>
+
+
+    </body>
+</html>
